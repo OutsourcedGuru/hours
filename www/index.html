@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="msapplication-tap-highlight" content="no" />
+<!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=medium-dpi" />
+<title>Hours</title>
+<script type="text/javascript"  src="js/platform-test.js"           ></script>
+<script type="text/javascript"  src="js/jquery-1.11.3.min.js"       ></script>
+<script type="text/javascript"  src="js/jquery.mobile-1.4.5.min.js" ></script>
+<link   type="text/css"         href="css/jquery.mobile-1.4.5.css"  rel="stylesheet" />
+<script type="text/javascript"  src="cordova.js"                    ></script>
+<script type="text/javascript"  src="js/index.js"                   ></script>
+</head>
+<body>
+<div data-role="page" id="home">
+    <div data-role="header"><h1>Hours</h1></div>
+    <div role="main" class="ui-content">Home page
+    </div>
+    <div id="homeNa" data-role="footer" data-position="fixed" style="position:absolute"><h1>Footer</h1></div>
+
+<script type="text/javascript">
+app.initialize();
+
+function onDeviceReady() {
+}
+
+document.addEventListener("deviceready", onDeviceReady, false);
+
+$(document).ready(function(){});
+
+</script>
+</body>
+</html>
