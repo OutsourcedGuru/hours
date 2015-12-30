@@ -16,7 +16,7 @@ The server side doesn't have to be Microsoft ASPX pages but I'm grafting this on
 *http://servername/reports/hours/mobile*/**users**
 *http://servername/reports/hours/mobile*/**time**
 
-The **servername** and **/reports/hours/mobile/** folder location is from my own project but can be easily customized in yours.
+The **servername** and **/reports/hours/mobile/** folder location is from my own project but can be easily customized in one place in your project's **js/config.js**.
 
 Each smartphone's UUID uniquely identifies the user lookup so that they don't have to authenticate.  This comes in via a **/?uuid=value** argument pair for every call.  I'm currently hard-coding those UUIDs server-side since I don't feel like creating another table in SQL Server (yet).
 

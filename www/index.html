@@ -13,23 +13,134 @@
 <link   type="text/css"         href="css/jquery.mobile-1.4.5.css"  rel="stylesheet" />
 <script type="text/javascript"  src="cordova.js"                    ></script>
 <script type="text/javascript"  src="js/index.js"                   ></script>
+<script type="text/javascript"  src="js/config.js"                  ></script>
+<link   type="text/css"         href="css/my.css"                   rel="stylesheet" />
+<script>
+    var isDebug = true;
+</script>
 </head>
 <body>
 <div data-role="page" id="home">
     <div data-role="header"><h1>Hours</h1></div>
-    <div role="main" class="ui-content">Home page
+    <div role="main" class="ui-content">
+        <p id="homeUserParagraph">Please select a customer on the next page.</p>
+        <p id="homeStatusParagraph"></p>
     </div>
-    <div id="homeNa" data-role="footer" data-position="fixed" style="position:absolute"><h1>Footer</h1></div>
+    <!-- The following is a pair of footers.  The first indicates a waiting status.
+         Upon success with getJSON() in the JavaScript below the visibility of the
+         two footers changes, allowing forward-progress navigation. -->
+    <div id="homeNavWaiting" data-role="footer" style="visibility: show;" data-position="fixed" style="position:absolute"><h1>Waiting for server...</h1></div>
+    <div id="homeNavCustomers" data-role="footer" style="visibility: hidden;" data-position="fixed" style="position:absolute"><h1>&nbsp;</h1><a data-transition="slide" class="ui-btn ui-corner-all ui-btn-inline ui-mini footer-button-right ui-btn-icon-right ui-icon-carat-r" href="#customers">Next</a></div>
+</div>
+
+<!-- This is the landing page for the Customers lookup.  It will be appended to within the
+     JavaScript code below upon success of getJSON(). -->
+<div data-role="page" id="customers">
+    <div data-role="header"><h1>Customers</h1></div>
+    <div role="main" id="content" class="ui-content"><ul data-role="listview" id="list" data-inset="true" data-filter="true" data-filter-placeholder="Search results..." data-divider-theme="a"></ul></div>
+    <div data-role="footer" data-position="fixed" style="position:absolute"><h1>&nbsp;</h1><a data-transition="slide" data-direction="reverse" class="ui-btn ui-corner-all ui-btn-inline ui-mini footer-button-left ui-btn-icon-left ui-icon-carat-l" href="#home">Back</a></div>
+</div>
 
 <script type="text/javascript">
 app.initialize();
 
-function onDeviceReady() {
+$(document).ready(function(){});
+
+// These functions will show/hide a div tag, for example, or provide a safe navigation
+// within PhoneGap/jQuery's environment.
+function Show(jqueryObj) {  jqueryObj.attr('style','visibility: show');     }
+function Hide(jqueryObj) {  jqueryObj.attr('style','visibility: hidden');   }
+function Redirect(strURL, nMilliseconds) {
+    if (nMilliseconds == null) {
+        $.mobile.navigate(strURL);
+    } else {
+        setTimeout(function() {
+            $.mobile.navigate(strURL);
+            return false;
+            }, nMilliseconds);
+    }
 }
+
+function onDeviceReady() {
+    var strUUID = '1';
+    if (isPhoneGap()) { strUUID = device.uuid };
+    var strURL = strServer + '/customers/?uuid=' + strUUID;
+    var strHTML = '';
+    var strJobPagesHtml = '';
+    $.getJSON(strURL, function(jsonData) {
+        // Do nothing at this level but wait for the response
+    }).done(function(jsonData) {
+        if (jsonData.status == 'success') {
+            $('#homeStatusParagraph').html('[Customers] lookup status: Success');
+            $('#list').append('<li role="list-divider">Active Customers</li>');
+        } else {
+            $('#homeStatusParagraph').html('[Customers] lookup status: Fail');
+            $('#list').append('<li role="list-divider">No Customers</li>');
+        }
+        // We now have what is likely a good-looking JSON response to parse
+        for (var i in jsonData.customers) {
+            // First create a series of landing pages, one per customer.  The page name will
+            // be something like #c_1, for example.  The URL here will be list_1, for example.
+            strHTML =
+                '<div data-role="page" id="c_' + jsonData.customers[i].id + '">' +
+                '<div data-role="header"><h1>' + jsonData.customers[i].name + '</h1></div>' +
+                '<div role="main" id="content" class="ui-content">' +
+                '<ul data-role="listview" id="list_' + jsonData.customers[i].id + '" ' +
+                'data-inset="true" data-filter="true" ' +
+                'data-filter-placeholder="Search results..." data-divider-theme="a">' +
+                '<li role="list-divider">Active Jobs</li>';
+
+            // Here, we're focusing on all the jobs for a single customer.
+            for (var j in jsonData.customers[i].jobs) {
+                // First create a series of landing pages, one per job.  The page name will
+                // be something like #c_1_j_1, for example.
+                strJobPagesHtml =
+                    '<div data-role="page" id="c_' + jsonData.customers[i].id + '_j_' + jsonData.customers[i].jobs[j].id + '">' +
+                    '<div data-role="header"><h1>' + jsonData.customers[i].jobs[j].name + '</h1></div>' +
+                    '<div role="main" id="content" class="ui-content"></div>' +
+                    '<div data-role="footer" data-position="fixed" style="position:absolute"><h1>&nbsp;</h1><a data-transition="slide" data-direction="reverse" class="ui-btn ui-corner-all ui-btn-inline ui-mini footer-button-left ui-btn-icon-left ui-icon-carat-l" href="javascript:window.history.back();">Back</a>' +
+                    '</div>' +
+                    '</div>';
+                $('body').append(strJobPagesHtml);
+            
+                // ...then the button link for the #c_1 customer landing page itself
+                // Note that this will be inserted inline with the customer's page content.
+                // inline with the #c_1, e.g., page content
+                strHTML += '<li><a data-transition="slide" href="#c_' + jsonData.customers[i].id + '_j_' + jsonData.customers[i].jobs[j].id + '">' + jsonData.customers[i].jobs[j].name + '</a></li>';
+                // Done adding one page plus one link per job for a single customer
+            }
+            
+            // We're now back to writing to the #c_1 customer landing page
+            strHTML +=
+                '</ul></div>' +
+                '<div data-role="footer" data-position="fixed" style="position:absolute"><h1>&nbsp;</h1><a data-transition="slide" data-direction="reverse" class="ui-btn ui-corner-all ui-btn-inline ui-mini footer-button-left ui-btn-icon-left ui-icon-carat-l" href="javascript:window.history.back();">Back</a>' +
+                '</div>' +
+                '</div>';
+            $('body').append(strHTML);
+
+            
+            // ...then the button link for the #customers page itself
+            $('#list').append('<li><a data-transition="slide" href="#c_' + jsonData.customers[i].id + '">' + jsonData.customers[i].name + '</a></li>');
+        }
+        
+        // End of JSON parsing
+        Hide($('#homeNavWaiting'));  Show($('#homeNavCustomers'));
+        Redirect('#customers', 3000);
+    }).fail(function(XMLHttpRequest, textStatus, e) {
+        // Do nothing on fail()
+        $('#homeStatusParagraph').html('Lookup failed, status=[' + textStatus + '], error=[' + e + ']');
+    }).always(function(jsonData) {
+        // Do nothing here
+    });
+}             // End of function onDeviceReady()
 
 document.addEventListener("deviceready", onDeviceReady, false);
 
-$(document).ready(function(){});
+// This part will detect if you're on a PC (non-mobile device) and fire off the function
+// so that you can test this from Safari or Internet Explorer on a desktop computer.
+if (isDebug && !isPhoneGap()) {
+    onDeviceReady();
+}
 
 </script>
 </body>
