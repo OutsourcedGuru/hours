@@ -97,7 +97,23 @@ function onDeviceReady() {
                 strJobPagesHtml =
                     '<div data-role="page" id="c_' + jsonData.customers[i].id + '_j_' + jsonData.customers[i].jobs[j].id + '">' +
                     '<div data-role="header"><h1>' + jsonData.customers[i].jobs[j].name + '</h1></div>' +
-                    '<div role="main" id="content" class="ui-content"></div>' +
+                    '<div role="main" id="content" class="ui-content"><form action="' + strServer + '/addHours.aspx" method="post">' +
+                        '<h2>Enter your hours:</h2>' +
+                        '<input name="customer_name" type="hidden" value="' + jsonData.customers[i].name + '">' +
+                        '<input name="customer_id" type="hidden" value="' + jsonData.customers[i].id + '">' +
+                        '<input name="job_name" type="hidden" value="' + jsonData.customers[i].jobs[j].name + '">' +
+                        '<input name="job_id" type="hidden" value="' + jsonData.customers[i].jobs[j].id + '">' +
+                        '<label for="initials">Initials</label>' +
+                        '<input name="initials" readonly value="' + jsonData.mobileuser + '" style="background:#f0f0f0;">' +
+                        '<input name="uuid" type="hidden" value="' + jsonData.uuid + '">' +
+                        '<label for="day">Day (YYYY-MM-DD format - example: 2016-01-28)</label>' +
+                        '<input name="day" type="date" id="day">' +
+                        '<label for="hours">Hours (Round to the quarter hour - examples: 1.25, 2, 4.5, 0.75)</label>' +
+                        '<input name="hours" type="number" id="hours">' +
+                        '<label for="description">Description</label>' +
+                        '<input name="description" data-clear-btn="true" type="text" id="description"><p/><p/>' +
+                        '<input type="submit" value="Submit">' +
+                        '</form></div>' +
                     '<div data-role="footer" data-position="fixed" style="position:absolute"><h1>&nbsp;</h1><a data-transition="slide" data-direction="reverse" class="ui-btn ui-corner-all ui-btn-inline ui-mini footer-button-left ui-btn-icon-left ui-icon-carat-l" href="javascript:window.history.back();">Back</a>' +
                     '</div>' +
                     '</div>';
