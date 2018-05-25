@@ -31,3 +31,8 @@ I'm converting the SQL records into JSON during server-side reporting to make th
 ### jQuery Mobile
 
 I'm taking advantage of jQuery Mobile for a consistent rendering of buttons and to easily manipulate the DOM.
+
+|Donate||Cryptocurrency|
+|:-----:|---|:--------:|
+| ![eth-receive](https://user-images.githubusercontent.com/15971213/40564950-932d4d10-601f-11e8-90f0-459f8b32f01c.png) || ![btc-receive](https://user-images.githubusercontent.com/15971213/40564971-a2826002-601f-11e8-8d5e-eeb35ab53300.png) |
+|Ethereum||Bitcoin|
